@@ -1,5 +1,150 @@
 .App {
   text-align: center;
+  direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.App h1 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.upload-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.upload-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.generate-button {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.generate-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.card-container {
+  border: 3px solid #e74c3c;
+  border-radius: 50%;
+  width: 350px;
+  height: 350px;
+  padding: 1rem;
+  margin: 2rem auto;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-title {
+  color: #e74c3c;
+  font-weight: bold;
+  margin: 0;
+  position: absolute;
+  top: 15px;
+  font-size: 1.1rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.image-grid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-image {
+  width: 55px;
+  height: 55px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #3498db;
+  transition: transform 0.2s;
+  position: absolute;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.card-image:hover {
+  transform: scale(1.2);
+  z-index: 10;
+}
+
+/* מיקום התמונות במעגל */
+.card-image:nth-child(1) {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.card-image:nth-child(2) {
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card-image:nth-child(3) {
+  top: 35%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+}
+
+.card-image:nth-child(4) {
+  top: 65%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+}
+
+.card-image:nth-child(5) {
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card-image:nth-child(6) {
+  top: 65%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+}
+
+.card-image:nth-child(7) {
+  top: 35%;
+  left: 20%;
+  transform: translate(-50%, -50%);
 }
 
 .App-logo {
