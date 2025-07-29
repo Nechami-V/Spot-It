@@ -10,36 +10,36 @@ const handleExportZIP = async () => {
 
     for (let cardIndex = 0; cardIndex < cards.length; cardIndex++) {
       const card = cards[cardIndex];
-      const cardImages = card.images || card; // תמיכה בשני המבנים
+      const cardImages = card.images || card;
       
-      // יצירת Canvas לכרטיס
+      // Create canvas for card
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       const cardSize = 400;
       canvas.width = cardSize;
       canvas.height = cardSize;
       
-      // רקע הכרטיס
+      // Card background
       const gradient = ctx.createLinearGradient(0, 0, cardSize, cardSize);
       gradient.addColorStop(0, '#fff5f5');
       gradient.addColorStop(1, '#ffe0e0');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, cardSize, cardSize);
       
-      // ציור מעגל הכרטיס
+      // Draw card circle
       ctx.strokeStyle = '#e74c3c';
       ctx.lineWidth = 6;
       ctx.beginPath();
       ctx.arc(cardSize/2, cardSize/2, cardSize/2 - 20, 0, 2 * Math.PI);
       ctx.stroke();
       
-      // כותרת הכרטיס
+      // Card title
       ctx.fillStyle = '#e74c3c';
       ctx.font = 'bold 24px Arial';
       ctx.textAlign = 'center';
       ctx.fillText(`כרטיס ${cardIndex + 1}`, cardSize/2, 40);
       
-      // טעינת התמונות וציורן
+      // Load and draw images
       const imagePromises = cardImages.map((imgUrl, i) => {
         return new Promise((resolve) => {
           const img = new Image();
@@ -48,29 +48,26 @@ const handleExportZIP = async () => {
             const imageSize = 70;
             let x, y;
             
-            // מיקומי התמונות - בדיוק כמו ב-CSS וב-PDF
+            // Image positions - matching CSS and PDF layout
             const positions = [
-              // תמונה ראשונה במרכז
-              { x: cardSize/2, y: cardSize/2 },
-              // שאר התמונות במעגל
-              { x: cardSize/2, y: cardSize * 0.25 }, // למעלה
-              { x: cardSize * 0.75, y: cardSize * 0.4 }, // ימין עליון
-              { x: cardSize * 0.75, y: cardSize * 0.6 }, // ימין תחתון
-              { x: cardSize/2, y: cardSize * 0.75 }, // למטה
-              { x: cardSize * 0.25, y: cardSize * 0.6 }, // שמאל תחתון
-              { x: cardSize * 0.25, y: cardSize * 0.4 }  // שמאל עליון
+              { x: cardSize/2, y: cardSize/2 }, // center (first image)
+              { x: cardSize/2, y: cardSize * 0.25 }, // top
+              { x: cardSize * 0.75, y: cardSize * 0.4 }, // top right
+              { x: cardSize * 0.75, y: cardSize * 0.6 }, // bottom right
+              { x: cardSize/2, y: cardSize * 0.75 }, // bottom
+              { x: cardSize * 0.25, y: cardSize * 0.6 }, // bottom left
+              { x: cardSize * 0.25, y: cardSize * 0.4 }  // top left
             ];
             
             if (i < positions.length) {
               x = positions[i].x;
               y = positions[i].y;
             } else {
-              // במקרה של יותר מ-7 תמונות
               x = cardSize/2;
               y = cardSize/2;
             }
             
-            // ציור התמונה כמעגל
+            // Draw image as circle
             ctx.save();
             ctx.beginPath();
             ctx.arc(x, y, imageSize/2, 0, 2 * Math.PI);
@@ -78,7 +75,7 @@ const handleExportZIP = async () => {
             ctx.drawImage(img, x - imageSize/2, y - imageSize/2, imageSize, imageSize);
             ctx.restore();
             
-            // גבול כחול לתמונה
+            // Blue border for image
             ctx.strokeStyle = '#3498db';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -87,14 +84,14 @@ const handleExportZIP = async () => {
             
             resolve();
           };
-          img.onerror = () => resolve(); // מתמודד עם שגיאות טעינה
+          img.onerror = () => resolve();
           img.src = imgUrl;
         });
       });
       
       await Promise.all(imagePromises);
       
-      // המרה ל-blob ושמירה ב-ZIP
+      // Convert to blob and save to ZIP
       const blob = await new Promise(resolve => {
         canvas.toBlob(resolve, 'image/png');
       });

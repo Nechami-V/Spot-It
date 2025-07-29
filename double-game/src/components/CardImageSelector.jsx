@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import generateDobbleCards from '../units/RunGameAlgorithm';
+import generateDobbleCards from '../utills/RunGameAlgorithm';
 import ExportToPDFButton from './onExportPDF_new';
 import ExportToZIPButton from './onExportZIP';
 function CardImageSelector() {
@@ -14,8 +14,8 @@ function CardImageSelector() {
     else count = 57;
 
     setImageCount(count);
-    setImages(Array(count).fill(null)); // מאפס את מערך התמונות
-    setCards([]); // מאפס את הכרטיסים במקרה של שינוי כמות
+    setImages(Array(count).fill(null)); // Reset images array
+    setCards([]); // Reset cards when count changes
   };
 
   const handleFileChange = (e, index) => {
@@ -52,7 +52,7 @@ function CardImageSelector() {
 
     try {
       const result = generateDobbleCards(selectedImages);
-      setCards(result); // המערך כבר מכיל מערכי תמונות
+      setCards(result); // Array already contains image arrays
     } catch (err) {
       alert(err.message);
     }

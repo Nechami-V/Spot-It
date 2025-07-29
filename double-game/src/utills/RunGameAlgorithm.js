@@ -1,7 +1,7 @@
 function generateDobbleCards(imageUrls) {
   const totalImages = imageUrls.length;
 
-  // מחשבים את ערך n כך שיתאים לנוסחה: totalImages = n^2 + n + 1
+  // Calculate n value to match formula: totalImages = n^2 + n + 1
   const n = Math.floor((-1 + Math.sqrt(1 + 4 * (totalImages - 1))) / 2);
 
   if (n * n + n + 1 !== totalImages) {
@@ -10,18 +10,18 @@ function generateDobbleCards(imageUrls) {
 
   const cards = [];
 
-  // כרטיסים מהצורה: { images: [...] }
+  // Cards format: { images: [...] }
 
-  // שלב 1: כרטיס ראשון עם התמונות 0 עד n
+  // Step 1: First card with images 0 to n
   for (let i = 0; i <= n; i++) {
-    const card = [0]; // כל הכרטיסים מכילים את התמונה הראשונה
+    const card = [0]; // All cards contain the first image
     for (let j = 1; j <= n; j++) {
       card.push(i * n + j);
     }
     cards.push(card);
   }
 
-  // שלב 2: כרטיסים נוספים
+  // Step 2: Additional cards
   for (let a = 1; a <= n; a++) {
     for (let b = 1; b <= n; b++) {
       const card = [a];
@@ -33,7 +33,7 @@ function generateDobbleCards(imageUrls) {
     }
   }
 
-  // המרה לאינדקסים של תמונות
+  // Convert to image indices
   const finalCards = cards.map(indices => indices.map(i => imageUrls[i]));
 
   return finalCards;

@@ -15,7 +15,7 @@ const ExportToPDFButton = ({ cards }) => {
         const card = cards[index];
         const cardImages = card.images || card;
         
-        // המרת התמונות ל-base64
+        // Convert images to base64
         const imageDataList = [];
         for (const imgUrl of cardImages) {
           try {
@@ -32,26 +32,26 @@ const ExportToPDFButton = ({ cards }) => {
           }
         }
 
-        // הגדרות כרטיס
+        // Card settings
         const centerX = 105;
         const centerY = 150;
         const cardRadius = 70;
         const imageSize = 18;
 
-        // רקע עמוד
+        // Page background
         doc.setFillColor(255, 255, 255);
         doc.rect(0, 0, 210, 297, 'F');
 
-        // ציור מעגל רקע הכרטיס
+        // Draw card background circle
         doc.setFillColor(255, 245, 245);
         doc.circle(centerX, centerY, cardRadius, 'F');
 
-        // ציור גבול הכרטיס
+        // Draw card border
         doc.setDrawColor(231, 76, 60);
         doc.setLineWidth(3);
         doc.circle(centerX, centerY, cardRadius);
 
-        // כותרת הכרטיס
+        // Card title
         doc.setFillColor(255, 255, 255);
         doc.setDrawColor(231, 76, 60);
         doc.setLineWidth(1);
@@ -61,23 +61,22 @@ const ExportToPDFButton = ({ cards }) => {
         doc.setTextColor(231, 76, 60);
         doc.text(`כרטיס ${index + 1}`, centerX, centerY - cardRadius + 20, { align: 'center' });
 
-        // מיקומי התמונות - בדיוק כמו ב-CSS
+        // Image positions - matching CSS layout
         const positions = [
-          { x: centerX, y: centerY }, // במרכז (תמונה ראשונה)
-          { x: centerX, y: centerY - 35 }, // למעלה
-          { x: centerX + 30, y: centerY - 18 }, // ימין עליון
-          { x: centerX + 30, y: centerY + 18 }, // ימין תחתון
-          { x: centerX, y: centerY + 35 }, // למטה
-          { x: centerX - 30, y: centerY + 18 }, // שמאל תחתון
-          { x: centerX - 30, y: centerY - 18 }  // שמאל עליון
+          { x: centerX, y: centerY }, // center (first image)
+          { x: centerX, y: centerY - 35 }, // top
+          { x: centerX + 30, y: centerY - 18 }, // top right
+          { x: centerX + 30, y: centerY + 18 }, // bottom right
+          { x: centerX, y: centerY + 35 }, // bottom
+          { x: centerX - 30, y: centerY + 18 }, // bottom left
+          { x: centerX - 30, y: centerY - 18 }  // top left
         ];
 
-        // הוספת התמונות
+        // Add images
         imageDataList.forEach((imgData, i) => {
           if (i < positions.length && imgData) {
             const pos = positions[i];
             try {
-              // הוספת התמונה
               doc.addImage(
                 imgData, 
                 'PNG', 
@@ -87,7 +86,7 @@ const ExportToPDFButton = ({ cards }) => {
                 imageSize
               );
               
-              // גבול עגול כחול לתמונה
+              // Blue circle border for image
               doc.setDrawColor(52, 152, 219);
               doc.setLineWidth(2);
               doc.circle(pos.x, pos.y, imageSize/2 + 1);
