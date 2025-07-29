@@ -138,7 +138,7 @@ function CardImageSelector() {
               key={index}
               className="card-container"
             >
-              <h3 className="card-title">כרטיס {index + 1}</h3>
+              {/* <h3 className="card-title">כרטיס {index + 1}</h3> */}
               <div className="image-grid">
                 {cardImages.map((imgSrc, i) => (
                   <img

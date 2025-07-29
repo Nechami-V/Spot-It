@@ -37,7 +37,7 @@ const handleExportZIP = async () => {
       ctx.fillStyle = '#e74c3c';
       ctx.font = 'bold 24px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText(`כרטיס ${cardIndex + 1}`, cardSize/2, 40);
+      // ctx.fillText(`כרטיס ${cardIndex + 1}`, cardSize/2, 40);
       
       // Load and draw images
       const imagePromises = cardImages.map((imgUrl, i) => {
