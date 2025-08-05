@@ -1,0 +1,127 @@
+.game-selector-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  font-family: 'Arial', sans-serif;
+}
+
+.game-selector-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.game-selector-header h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.game-selector-header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.game-card {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.game-card.available {
+  border: 2px solid #4CAF50;
+}
+
+.game-card.coming-soon {
+  opacity: 0.7;
+  cursor: not-allowed;
+  border: 2px solid #FFC107;
+}
+
+.game-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.game-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.game-card p {
+  color: #666;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.play-button {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.play-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.coming-soon {
+  background: linear-gradient(135deg, #FFC107 0%, #FF8F00 100%);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.platform-footer {
+  text-align: center;
+  margin-top: 3rem;
+  color: white;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .game-selector-container {
+    padding: 1rem;
+  }
+  
+  .game-selector-header h1 {
+    font-size: 2rem;
+  }
+  
+  .games-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .game-card {
+    padding: 1.5rem;
+  }
+}

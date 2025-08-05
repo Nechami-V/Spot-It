@@ -1,4 +1,22 @@
-# Getting Started with Create React App
+# Personal Games Platform
+
+A React-based platform for creating personalized games with your own images.
+
+## 🎮 Available Games
+
+### ✅ Spot It Game Generator
+Create custom Spot It cards with your personal images. Features:
+- Upload 31, 43, or 57 images
+- Automatic card generation using mathematical algorithms
+- PDF export for printing
+- ZIP export with complete card images
+- Circular card design
+
+### 🚧 Coming Soon
+- **Memory Game Generator** - Create memory games with personal pictures
+- **Snakes and Ladders** - Custom boards with your images
+
+## 🚀 Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
