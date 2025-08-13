@@ -44,9 +44,13 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
       
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const cardSize = 400;
+      const cardSize = 800; // Increased from 400 for higher resolution
       canvas.width = cardSize;
       canvas.height = cardSize;
+      
+      // Enable high quality rendering
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       
       // Card background and styling
       const gradient = ctx.createLinearGradient(0, 0, cardSize, cardSize);
@@ -55,28 +59,29 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, cardSize, cardSize);
       
-      // Card circle
+      // Card circle with higher quality
       ctx.strokeStyle = '#e74c3c';
-      ctx.lineWidth = 6;
+      ctx.lineWidth = 12; // Increased from 6 for higher resolution
       ctx.beginPath();
-      ctx.arc(cardSize/2, cardSize/2, cardSize/2 - 20, 0, 2 * Math.PI);
+      ctx.arc(cardSize/2, cardSize/2, cardSize/2 - 40, 0, 2 * Math.PI); // Increased margin
       ctx.stroke();
       
-      // Spot It specific image positions
+      // Spot It specific image positions - ensuring all images stay within card circle
       const positions = [
-        { x: cardSize/2, y: cardSize/2 },
-        { x: cardSize/2, y: cardSize * 0.25 },
-        { x: cardSize * 0.75, y: cardSize * 0.4 },
-        { x: cardSize * 0.75, y: cardSize * 0.6 },
-        { x: cardSize/2, y: cardSize * 0.75 },
-        { x: cardSize * 0.25, y: cardSize * 0.6 },
-        { x: cardSize * 0.25, y: cardSize * 0.4 }
+        { x: cardSize * 0.5, y: cardSize * 0.5 },    // Center image
+        { x: cardSize * 0.5, y: cardSize * 0.25 },   // Top center
+        { x: cardSize * 0.70, y: cardSize * 0.35 },  // Top right
+        { x: cardSize * 0.75, y: cardSize * 0.55 },  // Right center
+        { x: cardSize * 0.65, y: cardSize * 0.75 },  // Bottom right
+        { x: cardSize * 0.35, y: cardSize * 0.75 },  // Bottom left
+        { x: cardSize * 0.25, y: cardSize * 0.55 },  // Left center
+        { x: cardSize * 0.30, y: cardSize * 0.35 }   // Top left
       ];
       
-      await drawImagesOnCanvas(ctx, cardImages, positions, 70);
+      await drawImagesOnCanvas(ctx, cardImages, positions, 140); // Doubled image size for higher quality
       
       const blob = await new Promise(resolve => {
-        canvas.toBlob(resolve, 'image/png');
+        canvas.toBlob(resolve, 'image/png', 1.0); // Maximum quality
       });
       
       zip.file(`spot-it-card-${cardIndex + 1}.png`, blob);
@@ -159,7 +164,11 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
         img.onload = () => {
           const pos = positions[i];
           
-          // Draw image as circle
+          // Enable high quality image rendering
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          
+          // Draw image as circle with high quality
           ctx.save();
           ctx.beginPath();
           ctx.arc(pos.x, pos.y, imageSize/2, 0, 2 * Math.PI);
@@ -167,9 +176,9 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
           ctx.drawImage(img, pos.x - imageSize/2, pos.y - imageSize/2, imageSize, imageSize);
           ctx.restore();
           
-          // Blue border
-          ctx.strokeStyle = '#3498db';
-          ctx.lineWidth = 3;
+          // Black border matching display with higher quality
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 4; // Doubled for higher resolution
           ctx.beginPath();
           ctx.arc(pos.x, pos.y, imageSize/2, 0, 2 * Math.PI);
           ctx.stroke();

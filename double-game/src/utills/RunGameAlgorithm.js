@@ -10,18 +10,16 @@ function generateDobbleCards(imageUrls) {
 
   const cards = [];
 
-  // Cards format: { images: [...] }
-
-  // Step 1: First card with images 0 to n
+  // Step 1: First n+1 cards - each contains image 0 plus n other images
   for (let i = 0; i <= n; i++) {
-    const card = [0]; // All cards contain the first image
+    const card = [0]; // All cards start with image 0
     for (let j = 1; j <= n; j++) {
       card.push(i * n + j);
     }
     cards.push(card);
   }
 
-  // Step 2: Additional cards
+  // Step 2: Additional n^2 cards
   for (let a = 1; a <= n; a++) {
     for (let b = 1; b <= n; b++) {
       const card = [a];
@@ -33,8 +31,10 @@ function generateDobbleCards(imageUrls) {
     }
   }
 
-  // Convert to image indices
-  const finalCards = cards.map(indices => indices.map(i => imageUrls[i]));
+  // Convert to image indices and ensure we don't exceed the available images
+  const finalCards = cards.map(indices => 
+    indices.filter(i => i < totalImages).map(i => imageUrls[i])
+  );
 
   return finalCards;
 }

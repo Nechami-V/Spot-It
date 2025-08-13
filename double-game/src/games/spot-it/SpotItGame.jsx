@@ -43,6 +43,16 @@ function SpotItGame() {
     setImages(updatedImages);
   };
 
+  // Function to shuffle array elements randomly
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const runGameAlgorithm = () => {
     const selectedImages = images.filter(img => img !== null);
 
@@ -53,7 +63,9 @@ function SpotItGame() {
 
     try {
       const result = generateDobbleCards(selectedImages);
-      setCards(result); // Array already contains image arrays
+      // Shuffle the images within each card for random positioning
+      const shuffledCards = result.map(card => shuffleArray(card));
+      setCards(shuffledCards);
     } catch (err) {
       alert(err.message);
     }
@@ -138,7 +150,7 @@ function SpotItGame() {
 
       {cards.length > 0 && (
         <div style={{ marginTop: '2rem' }}>
-          <h2>Generated Cards:</h2>
+          <h2>Generated Cards: {cards.length} cards, {cards[0]?.length} images per card</h2>
           {cards.map((cardImages, index) => (
             <div
               key={index}

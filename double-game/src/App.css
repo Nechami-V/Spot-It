@@ -48,7 +48,7 @@
 }
 
 .card-container {
-  border: 3px solid #e74c3c;
+  /* border: 3px solid #e74c3c; */
   border-radius: 50%;
   width: 350px;
   height: 350px;
@@ -88,11 +88,11 @@
 }
 
 .card-image {
-  width: 55px;
-  height: 55px;
+  width: 75px;
+  height: 75px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid #3498db;
+  border: 2px solid #000;
   transition: transform 0.2s;
   position: absolute;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -103,7 +103,7 @@
   z-index: 10;
 }
 
-/* מיקום התמונות במעגל */
+/* מיקום התמונות במעגל - תמונה מרכזית */
 .card-image:nth-child(1) {
   top: 50%;
   left: 50%;
@@ -111,39 +111,46 @@
   z-index: 5;
 }
 
+/* מיקום התמונות במעגל - 7 תמונות במרחקים אחידים סביב המרכז */
 .card-image:nth-child(2) {
-  top: 20%;
+  top: 18%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
 .card-image:nth-child(3) {
-  top: 35%;
-  left: 80%;
+  top: 30%;
+  left: 77%;
   transform: translate(-50%, -50%);
 }
 
 .card-image:nth-child(4) {
-  top: 65%;
-  left: 80%;
+  top: 55%;
+  left: 84%;
   transform: translate(-50%, -50%);
 }
 
 .card-image:nth-child(5) {
-  top: 80%;
-  left: 50%;
+  top: 82%;
+  left: 70%;
   transform: translate(-50%, -50%);
 }
 
 .card-image:nth-child(6) {
-  top: 65%;
-  left: 20%;
+  top: 82%;
+  left: 30%;
   transform: translate(-50%, -50%);
 }
 
 .card-image:nth-child(7) {
-  top: 35%;
-  left: 20%;
+  top: 55%;
+  left: 16%;
+  transform: translate(-50%, -50%);
+}
+
+.card-image:nth-child(8) {
+  top: 30%;
+  left: 23%;
   transform: translate(-50%, -50%);
 }
 

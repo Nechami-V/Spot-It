@@ -52,15 +52,16 @@ const GenericExportPDF = ({ gameData, gameType, fileName = 'export.pdf' }) => {
       pdf.setLineWidth(2);
       pdf.circle(x + cardSize/2, y + cardSize/2, cardSize/2 - 10);
       
-      // Images positioning for Spot It
+      // Images positioning for Spot It - ensuring all images stay within card circle
       const positions = [
-        { x: x + cardSize/2, y: y + cardSize/2 },
-        { x: x + cardSize/2, y: y + cardSize * 0.25 },
-        { x: x + cardSize * 0.75, y: y + cardSize * 0.4 },
-        { x: x + cardSize * 0.75, y: y + cardSize * 0.6 },
-        { x: x + cardSize/2, y: y + cardSize * 0.75 },
-        { x: x + cardSize * 0.25, y: y + cardSize * 0.6 },
-        { x: x + cardSize * 0.25, y: y + cardSize * 0.4 }
+        { x: x + cardSize * 0.5, y: y + cardSize * 0.5 },    // Center image
+        { x: x + cardSize * 0.5, y: y + cardSize * 0.25 },   // Top center
+        { x: x + cardSize * 0.70, y: y + cardSize * 0.35 },  // Top right
+        { x: x + cardSize * 0.75, y: y + cardSize * 0.55 },  // Right center
+        { x: x + cardSize * 0.65, y: y + cardSize * 0.75 },  // Bottom right
+        { x: x + cardSize * 0.35, y: y + cardSize * 0.75 },  // Bottom left
+        { x: x + cardSize * 0.25, y: y + cardSize * 0.55 },  // Left center
+        { x: x + cardSize * 0.30, y: y + cardSize * 0.35 }   // Top left
       ];
       
       await addImagesToPDF(pdf, cardImages, positions, 25);
