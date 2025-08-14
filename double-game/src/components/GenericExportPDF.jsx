@@ -35,7 +35,11 @@ const GenericExportPDF = ({ gameData, gameType, fileName = 'export.pdf' }) => {
   };
 
   // Spot It specific export logic
-  const exportSpotItCards = async (pdf, cards) => {
+  const exportSpotItCards = async (pdf, gameData) => {
+    const cards = gameData.cards || gameData;
+    const cardTitle = gameData.cardTitle || '';
+    const backgroundImage = gameData.backgroundImage || null;
+    
     for (let cardIndex = 0; cardIndex < cards.length; cardIndex++) {
       if (cardIndex > 0) pdf.addPage();
       
@@ -46,6 +50,31 @@ const GenericExportPDF = ({ gameData, gameType, fileName = 'export.pdf' }) => {
       const pageHeight = pdf.internal.pageSize.getHeight();
       const x = (pageWidth - cardSize) / 2;
       const y = (pageHeight - cardSize) / 2;
+      
+      // Add background if provided
+      if (backgroundImage) {
+        try {
+          const bgData = await getImageData(backgroundImage, cardSize, cardSize);
+          if (bgData) {
+            pdf.addImage(bgData, 'JPEG', x, y, cardSize, cardSize, undefined, 'FAST');
+            // Add white overlay for brightness
+            pdf.setFillColor(255, 255, 255);
+            pdf.setGState(pdf.GState({opacity: 0.7}));
+            pdf.rect(x, y, cardSize, cardSize, 'F');
+            pdf.setGState(pdf.GState({opacity: 1.0}));
+          }
+        } catch (err) {
+          console.warn('Background image failed to load for PDF');
+        }
+      }
+      
+      // Add card title if provided
+      if (cardTitle) {
+        pdf.setFontSize(12);
+        pdf.setTextColor(51, 51, 51);
+        const titleWidth = pdf.getTextWidth(cardTitle);
+        pdf.text(cardTitle, x + cardSize/2 - titleWidth/2, y - 10);
+      }
       
       // Card circle
       pdf.setDrawColor(231, 76, 60);
@@ -64,7 +93,7 @@ const GenericExportPDF = ({ gameData, gameType, fileName = 'export.pdf' }) => {
         { x: x + cardSize * 0.30, y: y + cardSize * 0.35 }   // Top left
       ];
       
-      await addImagesToPDF(pdf, cardImages, positions, 25);
+      await addImagesToPDF(pdf, cardImages, positions, 35); // Increased image size
     }
   };
 
@@ -298,7 +327,7 @@ const GenericExportPDF = ({ gameData, gameType, fileName = 'export.pdf' }) => {
     }
   };
 
-  // Helper function to convert image to data URL
+  // Helper function to convert image to data URL with proper cropping
   const getImageData = (imageSrc, width, height) => {
     return new Promise((resolve) => {
       const img = new Image();
@@ -309,7 +338,27 @@ const GenericExportPDF = ({ gameData, gameType, fileName = 'export.pdf' }) => {
         canvas.width = width;
         canvas.height = height;
         
-        ctx.drawImage(img, 0, 0, width, height);
+        // Calculate proper cropping for center-top positioning
+        const imgAspectRatio = img.width / img.height;
+        let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
+        
+        if (imgAspectRatio > 1) {
+          // Image is wider than tall - crop sides
+          srcWidth = img.height; // Make it square
+          srcX = (img.width - srcWidth) / 2; // Center horizontally
+          srcY = 0; // Keep top
+        } else if (imgAspectRatio < 1) {
+          // Image is taller than wide - crop bottom
+          srcHeight = img.width; // Make it square
+          srcX = 0; // Keep left
+          srcY = 0; // Keep top (center-top cropping)
+        }
+        
+        ctx.drawImage(
+          img, 
+          srcX, srcY, srcWidth, srcHeight, // Source rectangle (cropped)
+          0, 0, width, height // Destination
+        );
         resolve(canvas.toDataURL('image/jpeg', 0.8));
       };
       img.onerror = () => resolve(null);
@@ -335,11 +384,31 @@ const GenericExportPDF = ({ gameData, gameType, fileName = 'export.pdf' }) => {
           canvas.width = imageSize * 2;
           canvas.height = imageSize * 2;
           
-          // Draw circular clipped image
+          // Calculate proper cropping for center-top positioning
+          const imgAspectRatio = img.width / img.height;
+          let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
+          
+          if (imgAspectRatio > 1) {
+            // Image is wider than tall - crop sides
+            srcWidth = img.height; // Make it square
+            srcX = (img.width - srcWidth) / 2; // Center horizontally
+            srcY = 0; // Keep top
+          } else if (imgAspectRatio < 1) {
+            // Image is taller than wide - crop bottom
+            srcHeight = img.width; // Make it square
+            srcX = 0; // Keep left
+            srcY = 0; // Keep top (center-top cropping)
+          }
+          
+          // Draw circular clipped image with proper cropping
           ctx.beginPath();
           ctx.arc(imageSize, imageSize, imageSize, 0, 2 * Math.PI);
           ctx.clip();
-          ctx.drawImage(img, 0, 0, imageSize * 2, imageSize * 2);
+          ctx.drawImage(
+            img, 
+            srcX, srcY, srcWidth, srcHeight, // Source rectangle (cropped)
+            0, 0, imageSize * 2, imageSize * 2 // Destination
+          );
           
           const imgData = canvas.toDataURL('image/jpeg', 0.8);
           pdf.addImage(imgData, 'JPEG', pos.x - imageSize/2, pos.y - imageSize/2, imageSize, imageSize);

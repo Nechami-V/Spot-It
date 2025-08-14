@@ -7,6 +7,8 @@ function SpotItGame() {
   const [imageCount, setImageCount] = useState(0);
   const [images, setImages] = useState([]);
   const [cards, setCards] = useState([]);
+  const [cardTitle, setCardTitle] = useState('');
+  const [backgroundImage, setBackgroundImage] = useState(null);
 
   const handleCountChange = (e) => {
     let count = parseInt(e.target.value);
@@ -41,6 +43,14 @@ function SpotItGame() {
       }
     });
     setImages(updatedImages);
+  };
+
+  const handleBackgroundImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+    setBackgroundImage(imageUrl);
   };
 
   // Function to shuffle array elements randomly
@@ -90,6 +100,61 @@ function SpotItGame() {
         <option value={7}>7</option>
         <option value={8}>8</option>
       </select>
+
+      {/* Card Title Input */}
+      <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+        <label htmlFor="card-title" style={{ display: 'block', marginBottom: '0.5rem' }}>
+          Card Title (optional):
+        </label>
+        <input 
+          id="card-title"
+          type="text" 
+          value={cardTitle}
+          onChange={(e) => setCardTitle(e.target.value)}
+          placeholder="Enter title for cards"
+          style={{ 
+            padding: '0.5rem', 
+            fontSize: '1rem', 
+            borderRadius: '5px', 
+            border: '1px solid #ccc',
+            width: '250px'
+          }}
+        />
+      </div>
+
+      {/* Background Image Upload */}
+      <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+        <label htmlFor="background-upload" className="upload-button">
+          Upload Background Image (optional)
+        </label>
+        <input 
+          id="background-upload"
+          type="file" 
+          accept="image/*" 
+          onChange={handleBackgroundImageChange}
+          style={{ display: 'none' }}
+        />
+        {backgroundImage && (
+          <div style={{ marginTop: '0.5rem' }}>
+            <small style={{ color: '#666' }}>Background image uploaded ✓</small>
+            <button 
+              onClick={() => setBackgroundImage(null)}
+              style={{ 
+                marginLeft: '10px', 
+                padding: '2px 8px', 
+                fontSize: '12px',
+                background: '#ff6b6b',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer'
+              }}
+            >
+              Remove
+            </button>
+          </div>
+        )}
+      </div>
 
       {imageCount > 0 && (
         <div style={{ margin: '1rem 0', textAlign: 'center' }}>
@@ -150,13 +215,50 @@ function SpotItGame() {
 
       {cards.length > 0 && (
         <div style={{ marginTop: '2rem' }}>
-          <h2>Generated Cards: {cards.length} cards, {cards[0]?.length} images per card</h2>
+          <h2>נוצרו {cards.length} כרטיסים, {cards[0]?.length} תמונות בכל כרטיס</h2>
           {cards.map((cardImages, index) => (
             <div
               key={index}
               className="card-container"
+              style={{
+                backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(45deg, #f0f8ff, #e6f3ff)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                position: 'relative'
+              }}
             >
-              <div className="image-grid">
+              {/* Background overlay for opacity */}
+              {backgroundImage && (
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  borderRadius: 'inherit'
+                }} />
+              )}
+              
+              {/* Card title */}
+              {cardTitle && (
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#333',
+                  textShadow: '1px 1px 2px rgba(255,255,255,0.8)',
+                  zIndex: 10
+                }}>
+                  {cardTitle}
+                </div>
+              )}
+              
+              <div className="image-grid" style={{ position: 'relative', zIndex: 5 }}>
                 {cardImages.map((imgSrc, i) => (
                   <img
                     key={i}
@@ -172,12 +274,20 @@ function SpotItGame() {
       )}
       <div style={{ textAlign: 'center', marginTop: '2rem' }}>
         <GenericExportPDF 
-          gameData={cards} 
+          gameData={{
+            cards: cards,
+            cardTitle: cardTitle,
+            backgroundImage: backgroundImage
+          }} 
           gameType="spot-it" 
           fileName="spot-it-cards.pdf" 
         />
         <GenericExportZIP 
-          gameData={cards} 
+          gameData={{
+            cards: cards,
+            cardTitle: cardTitle,
+            backgroundImage: backgroundImage
+          }} 
           gameType="spot-it" 
           fileName="spot-it-cards.zip" 
         />

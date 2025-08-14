@@ -88,14 +88,15 @@
 }
 
 .card-image {
-  width: 75px;
-  height: 75px;
-  object-fit: cover;
+  width: 100px;  /* Increased from 75px */
+  height: 100px; /* Increased from 75px */
+  object-fit: cover; /* Crops to fit while maintaining aspect ratio */
+  object-position: center top; /* Shows center-top part of image */
   border-radius: 50%;
-  border: 2px solid #000;
+  border: 3px solid #000; /* Increased from 2px */
   transition: transform 0.2s;
   position: absolute;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.3); /* Enhanced shadow */
 }
 
 .card-image:hover {

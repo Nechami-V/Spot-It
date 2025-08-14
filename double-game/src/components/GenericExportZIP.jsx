@@ -37,14 +37,18 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
   };
 
   // Spot It specific ZIP export
-  const exportSpotItToZip = async (zip, cards) => {
+  const exportSpotItToZip = async (zip, gameData) => {
+    const cards = gameData.cards || gameData;
+    const cardTitle = gameData.cardTitle || '';
+    const backgroundImage = gameData.backgroundImage || null;
+    
     for (let cardIndex = 0; cardIndex < cards.length; cardIndex++) {
       const card = cards[cardIndex];
       const cardImages = card.images || card;
       
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const cardSize = 800; // Increased from 400 for higher resolution
+      const cardSize = 1200; // Further increased resolution
       canvas.width = cardSize;
       canvas.height = cardSize;
       
@@ -52,19 +56,67 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       
-      // Card background and styling
-      const gradient = ctx.createLinearGradient(0, 0, cardSize, cardSize);
-      gradient.addColorStop(0, '#fff5f5');
-      gradient.addColorStop(1, '#ffe0e0');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, cardSize, cardSize);
+      // Card background
+      if (backgroundImage) {
+        const bgImg = new Image();
+        bgImg.crossOrigin = 'anonymous';
+        await new Promise(resolve => {
+          bgImg.onload = () => {
+            // Calculate proper cropping for center-top positioning
+            const imgAspectRatio = bgImg.width / bgImg.height;
+            let srcX = 0, srcY = 0, srcWidth = bgImg.width, srcHeight = bgImg.height;
+            
+            if (imgAspectRatio > 1) {
+              // Image is wider than tall - crop sides
+              srcWidth = bgImg.height; // Make it square
+              srcX = (bgImg.width - srcWidth) / 2; // Center horizontally
+              srcY = 0; // Keep top
+            } else if (imgAspectRatio < 1) {
+              // Image is taller than wide - crop bottom
+              srcHeight = bgImg.width; // Make it square
+              srcX = 0; // Keep left
+              srcY = 0; // Keep top (center-top cropping)
+            }
+            
+            ctx.globalAlpha = 0.3; // Very light background
+            ctx.drawImage(
+              bgImg, 
+              srcX, srcY, srcWidth, srcHeight, // Source rectangle (cropped)
+              0, 0, cardSize, cardSize // Destination
+            );
+            ctx.globalAlpha = 1.0;
+            resolve();
+          };
+          bgImg.onerror = () => resolve();
+          bgImg.src = backgroundImage;
+        });
+        
+        // Add white overlay for brightness
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillRect(0, 0, cardSize, cardSize);
+      } else {
+        // Default gradient background
+        const gradient = ctx.createLinearGradient(0, 0, cardSize, cardSize);
+        gradient.addColorStop(0, '#f0f8ff');
+        gradient.addColorStop(1, '#e6f3ff');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, cardSize, cardSize);
+      }
       
       // Card circle with higher quality
       ctx.strokeStyle = '#e74c3c';
-      ctx.lineWidth = 12; // Increased from 6 for higher resolution
+      ctx.lineWidth = 18; // Increased for higher resolution
       ctx.beginPath();
-      ctx.arc(cardSize/2, cardSize/2, cardSize/2 - 40, 0, 2 * Math.PI); // Increased margin
+      ctx.arc(cardSize/2, cardSize/2, cardSize/2 - 60, 0, 2 * Math.PI);
       ctx.stroke();
+      
+      // Add card title if provided
+      if (cardTitle) {
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 48px Arial'; // Larger font for higher resolution
+        ctx.textAlign = 'center';
+        ctx.fillText(cardTitle, cardSize/2, 80);
+      }
       
       // Spot It specific image positions - ensuring all images stay within card circle
       const positions = [
@@ -78,7 +130,7 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
         { x: cardSize * 0.30, y: cardSize * 0.35 }   // Top left
       ];
       
-      await drawImagesOnCanvas(ctx, cardImages, positions, 140); // Doubled image size for higher quality
+      await drawImagesOnCanvas(ctx, cardImages, positions, 180); // Further increased image size
       
       const blob = await new Promise(resolve => {
         canvas.toBlob(resolve, 'image/png', 1.0); // Maximum quality
@@ -168,17 +220,37 @@ const GenericExportZIP = ({ gameData, gameType, fileName = 'export.zip' }) => {
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
           
-          // Draw image as circle with high quality
+          // Calculate proper cropping for center-top positioning
+          const imgAspectRatio = img.width / img.height;
+          let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
+          
+          if (imgAspectRatio > 1) {
+            // Image is wider than tall - crop sides
+            srcWidth = img.height; // Make it square
+            srcX = (img.width - srcWidth) / 2; // Center horizontally
+            srcY = 0; // Keep top
+          } else if (imgAspectRatio < 1) {
+            // Image is taller than wide - crop bottom
+            srcHeight = img.width; // Make it square
+            srcX = 0; // Keep left
+            srcY = 0; // Keep top (center-top cropping)
+          }
+          
+          // Draw image as circle with proper cropping
           ctx.save();
           ctx.beginPath();
           ctx.arc(pos.x, pos.y, imageSize/2, 0, 2 * Math.PI);
           ctx.clip();
-          ctx.drawImage(img, pos.x - imageSize/2, pos.y - imageSize/2, imageSize, imageSize);
+          ctx.drawImage(
+            img, 
+            srcX, srcY, srcWidth, srcHeight, // Source rectangle (cropped)
+            pos.x - imageSize/2, pos.y - imageSize/2, imageSize, imageSize // Destination
+          );
           ctx.restore();
           
           // Black border matching display with higher quality
           ctx.strokeStyle = '#000';
-          ctx.lineWidth = 4; // Doubled for higher resolution
+          ctx.lineWidth = 6; // Increased for higher resolution
           ctx.beginPath();
           ctx.arc(pos.x, pos.y, imageSize/2, 0, 2 * Math.PI);
           ctx.stroke();
